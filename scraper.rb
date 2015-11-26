@@ -15,6 +15,7 @@ base_url = "http://www.begavalley.nsw.gov.au/page.asp?c=553"
 
 agent = Mechanize.new
 main_page = agent.get(base_url)
+date_scraped = Date.today.to_s
 
 main_page.links.each do |link|
   if(link.text["Development Proposal"])
