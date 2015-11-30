@@ -57,7 +57,6 @@ main_page.links.each do |link|
 	info_url = "http://www.begavalley.nsw.gov.au#{link.uri}"
 	comment_url = proposal_page.body["mailto:council@begavalley.nsw.gov.au"] # so not good
 	on_notice_to = find_on_notice_to(proposal_page.body)
-	puts "To: #{on_notice_to}"
 	record = {
 		'council_reference' => council_reference,
 		'address' => address,
