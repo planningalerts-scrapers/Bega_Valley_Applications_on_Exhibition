@@ -26,7 +26,6 @@ def find_on_notice_to(page) # text: "If you would like to comment on the proposa
   magic_string1 = "comment on the proposal"
   magic_string2 = "write to us before"
   lines = page.split("\n")
-  on_notice_line = ""
   year = ""
   dday = ""
   month = ""
@@ -35,8 +34,7 @@ def find_on_notice_to(page) # text: "If you would like to comment on the proposa
       partial_cut = line[/before(.*)\./]
       on_notice_raw = partial_cut[7,partial_cut.length-8]
       year = on_notice_raw[on_notice_raw.length-4,on_notice_raw.length]
-      month_text = on_notice_raw[2,on_notice_raw.length-7]
-      month = month_text_to_num(month_text)
+      month = month_text_to_num(on_notice_raw[2,on_notice_raw.length-7])
       dday = on_notice_raw[0,2].chomp(" ").rjust(2,"0")
     end
   end
