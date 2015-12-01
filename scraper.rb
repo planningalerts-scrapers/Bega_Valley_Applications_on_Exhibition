@@ -22,7 +22,8 @@ def month_text_to_num(month_text)
   if month_text["ovember"] then return "11" end
   if month_text["ecember"] then return "12" end
 end
-def find_on_notice_to(page) # text: "If you would like to comment on the proposal please write to us before"
+def find_on_notice_to(page)
+# searching for text: "If you would like to comment on the proposal please write to us before"
   magic_string1 = "comment on the proposal"
   magic_string2 = "write to us before"
   lines = page.split("\n")
@@ -40,6 +41,10 @@ def find_on_notice_to(page) # text: "If you would like to comment on the proposa
   end
   return "#{year}-#{month}-#{dday}"
 end
+def clean_address(raw_address)
+  #messy... first regex cuts upto "DP:", then the second cuts after the first "-"
+  return "#{raw_address[/(?<=DP:)(.*)/][/(?<=-)(.*)/]}, NSW"
+end
 
 base_url = "http://www.begavalley.nsw.gov.au/page.asp?c=553"
 agent = Mechanize.new
@@ -50,7 +55,7 @@ main_page.links.each do |link|
   if(link.text["Development Proposal"])
     proposal_page = agent.get(link.href)
     council_reference = strip_tags(proposal_page.body[/DA\ No(.*)/]).chomp.strip
-    address = strip_titles(strip_tags(proposal_page.body[/Description of Land(.*)/])).chomp.strip
+    address = clean_address(strip_titles(strip_tags(proposal_page.body[/Description of Land(.*)/])).chomp.strip)
     description = strip_titles(strip_tags(proposal_page.body[/Description of Proposal(.*)/])).chomp.strip
 	info_url = "http://www.begavalley.nsw.gov.au#{link.uri}"
 	comment_url = proposal_page.body["mailto:council@begavalley.nsw.gov.au"] # so not good
@@ -70,7 +75,6 @@ main_page.links.each do |link|
 	else
 	  puts "Skipping already saved record " + record['council_reference']
 	end
-
   end
 end
 
