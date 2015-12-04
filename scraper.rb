@@ -2,11 +2,16 @@
 require 'scraperwiki'
 require 'mechanize'
 
-def strip_tags( str )
+def strip_tags(str)
   str.gsub("</li>", "").gsub("</strong>", "").gsub("DA No.:&nbsp; ", "").gsub("&amp;","and")
 end
-def strip_titles( str )
+def strip_titles(str)
   str.gsub("Description of Land: ", "").gsub("Description of Proposal: ", "")
+end
+def clean_whitespace(str)
+   if (! str.nil?) then
+     str.gsub("\r "," ").gsub("\n"," ").gsub("\t"," ").gsub("\b"," ").squeeze(" ").strip
+   end
 end
 def month_text_to_num(month_text)
   if month_text["anuary"] then return "01" end
@@ -42,14 +47,33 @@ def find_on_notice_to(page)
   return "#{year}-#{month}-#{dday}"
 end
 def clean_address(raw_address)
-  #messy... first regex cuts upto "DP:", then the second cuts after the first "-"
+  # messy... first regex cuts upto "DP:", then the second cuts after the first "-"
   return "#{raw_address[/(?<=DP:)(.*)/][/(?<=-)(.*)/]}, NSW"
+end
+def clean_alt_address(raw_address)
+  trim1 = raw_address[/(?<=DP )(.*)/]
+  if (trim1.nil?) then trim1 = raw_address[/(?<=SP )(.*)/] end #sometimes SP is used instead of DP
+  trim2 = "#{trim1[/(?<=\ )(.*)/]}, NSW"
+  if (trim2[0] == "&") then #strip second ref# if there
+    trim2 = trim2[/(?<=\ )(.*)/]
+    trim2 = trim2[/(?<=\ )(.*)/]
+  end
+  if(trim2.start_with?("Sec")) then #strip section#
+    trim2 = trim2[/(?<=\ )(.*)/]
+	  if(trim2[/^[0-9]+,/]) then #with optional space
+		trim2 = trim2[/(?<=\ )(.*)/]
+	  end
+  end
+  return trim2.strip
 end
 
 base_url = "http://www.begavalley.nsw.gov.au/page.asp?c=553"
+alt_base_url = "http://www.begavalley.nsw.gov.au/cp_themes/default/page.asp?p=DOC-JDH-32-26-07"
 agent = Mechanize.new
 main_page = agent.get(base_url)
+alt_main_page = agent.get(alt_base_url)
 date_scraped = Date.today.to_s
+comment_url = "mailto:council@begavalley.nsw.gov.au" # so not good
 
 main_page.links.each do |link|
   if(link.text["Development Proposal"])
@@ -58,7 +82,6 @@ main_page.links.each do |link|
     address = clean_address(strip_titles(strip_tags(proposal_page.body[/Description of Land(.*)/])).chomp.strip)
     description = strip_titles(strip_tags(proposal_page.body[/Description of Proposal(.*)/])).chomp.strip
 	info_url = "http://www.begavalley.nsw.gov.au#{link.uri}"
-	comment_url = proposal_page.body["mailto:council@begavalley.nsw.gov.au"] # so not good
 	on_notice_to = find_on_notice_to(proposal_page.body)
 	record = {
 		'council_reference' => council_reference,
@@ -78,5 +101,29 @@ main_page.links.each do |link|
   end
 end
 
-
-
+alt_main_page.search("/html/body/div/div/div[2]/div[2]/div/p").each do |plan|
+  plan_text = plan.text
+  raw_council_reference = plan_text[/(Development)(.*)/]
+  if (! raw_council_reference.nil?) then 
+    council_reference = clean_whitespace(raw_council_reference[/[0-9]+.[0-9]+/])
+    address = clean_alt_address(clean_whitespace(plan_text[/(?<=Property:\ )(.*)/]))
+	description = clean_whitespace(plan_text[/(?<=Proposal:\ )(.*)/])
+	if(description.nil?) then description = "not provided" end 
+	info_url = alt_base_url
+	
+	record = {
+		'council_reference' => council_reference,
+		'address' => address,
+		'description' => description,
+		'info_url' => info_url,
+		'comment_url' => comment_url,
+		'date_scraped' => date_scraped,
+	}
+	if (ScraperWiki.select("* from data where `council_reference` LIKE '#{record['council_reference']}'").empty? rescue true)
+	  ScraperWiki.save_sqlite(['council_reference'], record)
+      puts "Storing: #{record['council_reference']}"
+	else
+	  puts "Skipping already saved record " + record['council_reference']
+	end
+  end
+end
