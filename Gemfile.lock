@@ -1,61 +1,61 @@
 GIT
   remote: git://github.com/planningalerts-scrapers/atdisplanningalertsfeed.git
-  revision: ce20de6801cf4131a0440602059ff63414d73a6c
+  revision: b9719baec18ce57dc3c49265d3aafb34dbc97749
   specs:
-    atdisplanningalertsfeed (0.0.1)
+    atdisplanningalertsfeed (0.0.2)
       atdis
       scraperwiki-morph
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (4.2.6)
-      activesupport (= 4.2.6)
-      builder (~> 3.1)
-    activesupport (4.2.6)
-      i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
+    activemodel (5.2.3)
+      activesupport (= 5.2.3)
+    activesupport (5.2.3)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 0.7, < 2)
       minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     atdis (0.3.13)
       activemodel
       multi_json (~> 1.7)
       rest-client
       rgeo-geojson
-    builder (3.2.2)
-    domain_name (0.5.20160310)
+    concurrent-ruby (1.1.5)
+    domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
-    http-cookie (1.0.2)
+    http-cookie (1.0.3)
       domain_name (~> 0.5)
-    httpclient (2.7.1)
-    i18n (0.7.0)
-    json (1.8.3)
-    mime-types (2.99.1)
-    minitest (5.8.4)
-    multi_json (1.11.2)
+    httpclient (2.8.3)
+    i18n (1.6.0)
+      concurrent-ruby (~> 1.0)
+    mime-types (3.2.2)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2019.0331)
+    minitest (5.11.3)
+    multi_json (1.13.1)
     netrc (0.11.0)
-    rest-client (1.8.0)
+    rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
-      mime-types (>= 1.16, < 3.0)
-      netrc (~> 0.7)
-    rgeo (0.5.3)
-    rgeo-geojson (0.4.2)
-      rgeo (~> 0.5)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
+    rgeo (2.0.1)
+    rgeo-geojson (2.1.1)
+      rgeo (>= 1.0.0)
     scraperwiki (3.0.2)
       httpclient
       sqlite_magic
     scraperwiki-morph (0.1.1)
       scraperwiki
-    sqlite3 (1.3.11)
+    sqlite3 (1.4.1)
     sqlite_magic (0.0.6)
       sqlite3
-    thread_safe (0.3.5)
-    tzinfo (1.2.2)
+    thread_safe (0.3.6)
+    tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.2)
+    unf_ext (0.0.7.6)
 
 PLATFORMS
   ruby
@@ -64,4 +64,4 @@ DEPENDENCIES
   atdisplanningalertsfeed!
 
 BUNDLED WITH
-   1.11.2
+   1.16.2
