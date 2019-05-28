@@ -1,9 +1,9 @@
 GIT
   remote: git://github.com/planningalerts-scrapers/atdisplanningalertsfeed.git
-  revision: b9719baec18ce57dc3c49265d3aafb34dbc97749
+  revision: 2c548698f1ec9cd3c9e070260fc604cdcf57429b
   specs:
-    atdisplanningalertsfeed (0.0.2)
-      atdis
+    atdisplanningalertsfeed (0.1.0)
+      atdis (>= 0.4.1)
       scraperwiki-morph
 
 GEM
@@ -16,8 +16,9 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    atdis (0.3.13)
+    atdis (0.4.1)
       activemodel
+      activesupport
       multi_json (~> 1.7)
       rest-client
       rgeo-geojson
